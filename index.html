@@ -4955,6 +4955,7 @@ var author$project$Main$viewHelper = function (a) {
 					]))
 			]));
 };
+var elm$core$String$reverse = _String_reverse;
 var elm$core$String$toInt = _String_toInt;
 var author$project$Main$view = function (model) {
 	var _n0 = elm$core$String$toInt(model.inputData);
@@ -4964,7 +4965,8 @@ var author$project$Main$view = function (model) {
 		return author$project$Main$viewHelper(
 			elm$core$String$fromInt(newVal));
 	} else {
-		return author$project$Main$viewHelper(model.inputData);
+		return author$project$Main$viewHelper(
+			elm$core$String$reverse(model.inputData));
 	}
 };
 var elm$core$Platform$Cmd$batch = _Platform_batch;

@@ -46,7 +46,7 @@ view model =
             viewHelper (String.fromInt newVal)
 
         Nothing ->
-            viewHelper model.inputData
+            viewHelper (String.reverse model.inputData)
 
 
 viewHelper : String -> Html Msg
