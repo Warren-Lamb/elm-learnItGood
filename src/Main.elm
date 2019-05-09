@@ -63,7 +63,15 @@ view model =
             viewHelper (String.fromInt newVal)
 
         Nothing ->
-            viewHelper (String.reverse model.inputData)
+            let
+                suf =
+                    if String.length model.inputData > 0 then
+                        "!!!"
+
+                    else
+                        ""
+            in
+            viewHelper (String.reverse model.inputData ++ suf)
 
 
 viewHelper : String -> Html Msg
