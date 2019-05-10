@@ -1,0 +1,24 @@
+<html>
+<head>
+  <style>
+    /* you can style your program here */
+  </style>
+</head>
+<body>
+  <main></main>
+  <script src="elm.js"></script>
+  <script>
+    var app = Elm.Main.init({ node: document.querySelector('main') })
+    app.ports.cache.subscribe(function(data) {
+    localStorage.setItem('sendVal', JSON.stringify(data));
+    });
+    /*app.ports.toJs.subscribe(data => {
+      console.log(data)
+      setTimeout(() => app.ports.toElm.send(data), 4000)
+    })*/
+
+  </script>
+</body>
+</html>
+
+

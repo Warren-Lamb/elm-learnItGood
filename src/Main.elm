@@ -1,16 +1,18 @@
-module Main exposing (Model, init, main)
+port module Main exposing (Model, init, main)
 
 import Browser
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, onInput)
+import Json.Encode as E
 
 
 main =
-    Browser.sandbox
+    Browser.element
         { init = init
         , update = update
         , view = view
+        , subscriptions = subscriptions
         }
 
 
@@ -29,23 +31,43 @@ type Msg
     | StoreData
 
 
-init : Model
-init =
-    { inputData = "", storedData = "" }
+
+-- Ports
+
+
+port storeVal : E.Value -> Cmd msg
+
+
+
+-- Subscriptions
+
+
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    Sub.none
+
+
+
+-- Init
+
+
+init : () -> ( Model, Cmd Msg )
+init _ =
+    ( { inputData = "", storedData = "" }, Cmd.none )
 
 
 
 -- Update
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         GotData data ->
-            { model | inputData = data }
+            ( { model | inputData = data }, Cmd.none )
 
         StoreData ->
-            { model | storedData = model.inputData }
+            ( { model | storedData = model.inputData }, Cmd.none )
 
 
 
