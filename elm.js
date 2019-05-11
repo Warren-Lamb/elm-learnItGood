@@ -4789,29 +4789,49 @@ var elm$core$Platform$Cmd$batch = _Platform_batch;
 var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
 var author$project$Main$init = function (_n0) {
 	return _Utils_Tuple2(
-		{inputData: '', storedData: ''},
+		{inputData: '', storedData: '', valFromJs: 0},
 		elm$core$Platform$Cmd$none);
 };
-var elm$core$Platform$Sub$batch = _Platform_batch;
-var elm$core$Platform$Sub$none = elm$core$Platform$Sub$batch(_List_Nil);
-var author$project$Main$subscriptions = function (_n0) {
-	return elm$core$Platform$Sub$none;
+var author$project$Main$GotValFromJs = function (a) {
+	return {$: 'GotValFromJs', a: a};
 };
+var elm$json$Json$Decode$value = _Json_decodeValue;
+var author$project$Main$portIntoElm = _Platform_incomingPort('portIntoElm', elm$json$Json$Decode$value);
+var author$project$Main$subscriptions = function (model) {
+	return author$project$Main$portIntoElm(author$project$Main$GotValFromJs);
+};
+var elm$json$Json$Decode$decodeValue = _Json_run;
+var elm$json$Json$Decode$int = _Json_decodeInt;
 var author$project$Main$update = F2(
 	function (msg, model) {
-		if (msg.$ === 'GotData') {
-			var data = msg.a;
-			return _Utils_Tuple2(
-				_Utils_update(
-					model,
-					{inputData: data}),
-				elm$core$Platform$Cmd$none);
-		} else {
-			return _Utils_Tuple2(
-				_Utils_update(
-					model,
-					{storedData: model.inputData}),
-				elm$core$Platform$Cmd$none);
+		switch (msg.$) {
+			case 'GotData':
+				var data = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{inputData: data}),
+					elm$core$Platform$Cmd$none);
+			case 'StoreData':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{storedData: model.inputData}),
+					elm$core$Platform$Cmd$none);
+			default:
+				var encodedVal = msg.a;
+				var _n1 = A2(elm$json$Json$Decode$decodeValue, elm$json$Json$Decode$int, encodedVal);
+				if (_n1.$ === 'Err') {
+					var err = _n1.a;
+					return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
+				} else {
+					var decoded = _n1.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{valFromJs: decoded}),
+						elm$core$Platform$Cmd$none);
+				}
 		}
 	});
 var author$project$Main$GotData = function (a) {
@@ -4839,7 +4859,6 @@ var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 var elm$html$Html$button = _VirtualDom_node('button');
 var elm$html$Html$div = _VirtualDom_node('div');
 var elm$html$Html$input = _VirtualDom_node('input');
-var elm$html$Html$span = _VirtualDom_node('span');
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
 var elm$json$Json$Encode$string = _Json_wrap;
@@ -4958,49 +4977,59 @@ var elm$html$Html$Events$onInput = function (tagger) {
 			elm$html$Html$Events$alwaysStop,
 			A2(elm$json$Json$Decode$map, tagger, elm$html$Html$Events$targetValue)));
 };
-var author$project$Main$viewHelper = function (a) {
-	return A2(
-		elm$html$Html$div,
-		_List_Nil,
-		_List_fromArray(
-			[
-				A2(
-				elm$html$Html$input,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$placeholder('Talk2Me'),
-						elm$html$Html$Events$onInput(author$project$Main$GotData)
-					]),
-				_List_Nil),
-				A2(
-				elm$html$Html$span,
-				_List_Nil,
-				_List_fromArray(
-					[
-						A2(
-						elm$html$Html$div,
-						_List_fromArray(
-							[
-								A2(elm$html$Html$Attributes$style, 'color', 'Blue'),
-								A2(elm$html$Html$Attributes$style, 'font-size', '40px')
-							]),
-						_List_fromArray(
-							[
-								elm$html$Html$text(a)
-							])),
-						A2(
-						elm$html$Html$button,
-						_List_fromArray(
-							[
-								elm$html$Html$Events$onClick(author$project$Main$StoreData)
-							]),
-						_List_fromArray(
-							[
-								elm$html$Html$text('Store Value')
-							]))
-					]))
-			]));
-};
+var author$project$Main$viewHelper = F2(
+	function (a, b) {
+		return A2(
+			elm$html$Html$div,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					elm$html$Html$input,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$placeholder('Talk2Me'),
+							elm$html$Html$Events$onInput(author$project$Main$GotData)
+						]),
+					_List_Nil),
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							A2(elm$html$Html$Attributes$style, 'color', 'Blue'),
+							A2(elm$html$Html$Attributes$style, 'font-size', '40px')
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text(a)
+						])),
+					A2(
+					elm$html$Html$button,
+					_List_fromArray(
+						[
+							elm$html$Html$Events$onClick(author$project$Main$StoreData)
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('Store Value')
+						])),
+					A2(
+					elm$html$Html$button,
+					_List_Nil,
+					_List_fromArray(
+						[
+							elm$html$Html$text('Get Value Store')
+						])),
+					A2(
+					elm$html$Html$div,
+					_List_Nil,
+					_List_fromArray(
+						[
+							elm$html$Html$text(
+							elm$core$String$fromInt(b))
+						]))
+				]));
+	});
 var elm$core$String$length = _String_length;
 var elm$core$String$reverse = _String_reverse;
 var elm$core$String$toInt = _String_toInt;
@@ -5009,14 +5038,18 @@ var author$project$Main$view = function (model) {
 	if (_n0.$ === 'Just') {
 		var integer = _n0.a;
 		var newVal = integer * 42;
-		return author$project$Main$viewHelper(
-			elm$core$String$fromInt(newVal));
+		return A2(
+			author$project$Main$viewHelper,
+			elm$core$String$fromInt(newVal),
+			model.valFromJs);
 	} else {
 		var suf = (elm$core$String$length(model.inputData) > 0) ? '!!!' : '';
-		return author$project$Main$viewHelper(
+		return A2(
+			author$project$Main$viewHelper,
 			_Utils_ap(
 				elm$core$String$reverse(model.inputData),
-				suf));
+				suf),
+			model.valFromJs);
 	}
 };
 var elm$browser$Browser$External = function (a) {
